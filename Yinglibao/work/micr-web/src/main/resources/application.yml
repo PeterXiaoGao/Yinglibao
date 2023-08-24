@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: micr-web
+  #路径匹配规则
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  redis:
+    host: localhost
+    port: 6379
+
+#\u7AEF\u53E3\u53F7
+server:
+  port: 8000
+  servlet:
+    context-path: /api
+    encoding:
+      enabled: true
+      charset: UTF-8
+      force: true
+
+
+#dubbo\u914D\u7F6E
+dubbo:
+  registry:
+    address: zookeeper://localhost:2181
+  scan:
+    base-packages: com.bjpowernode.front
+  consumer:
+    check: false
+    timeout: 50000
+    retries: 0
+
+#配置短信模板
+aly:
+  sms:
+    url: https://cxkjsms.market.alicloudapi.com/chuangxinsms/dxjk
+    appcode: 27648d207c824f4eb52fe1392a515d09
+    content: 【大富科技】你的验证码是：%s，3分钟内有效，请勿泄露给他人。
+    login-text: 【大富科技】登录验证码是：%s，3分钟内有效，请勿泄露给他人.
+  realname:
+    url: https://eid.shumaidata.com/eid/check
+    appcode: 27648d207c824f4eb52fe1392a515d09
+
+jwt:
+  secret: 307a2418d38a497794f2ed74d8aaf706

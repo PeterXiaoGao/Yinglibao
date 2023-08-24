@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学习axios</title>
+    <script src="js/axios.min.js"></script>
+</head>
+<body>
+    <div align="center">
+        <button onclick="funGet()">使用axios发送get请求，无参数</button><br><br>
+        <button onclick="get2()">使用axios发送get请求，有两个参数</button><br><br>
+        <button onclick="get3()">使用axios发送get请求，有两个参数params</button><br><br>
+        <button onclick="post1()">使用axios发送post请求，有两个参数 id=xxx&name=xxxx</button><br><br>
+        <button onclick="post2()">使用axios发送post请求，参数请求的数据是json</button><br><br>
+        <button onclick="post3()">使用axios发送post请求，参数请求的数据是json,配置的方式</button><br><br>
+    </div>
+    
+
+
+
+    <script>
+
+        /* get 请求没有参数
+            axios的格式： axios.get(url).then().catch().finally()
+        */
+        function funGet(){
+            let url = "http://localhost:9000/api/user/query";
+            axios.get(url).then(resp => {
+                // then 是一个函数，表示请求成功时执行的
+                // resp 是形参，表示服务器返回的数据，这个数据是有axios封装好的。
+                console.log("请求成功，返回服务器的数据：" + resp);
+            }).catch(err=>{
+                console.log("请求错误" + err);
+            }).finally( () => {
+                console.log("总是会执行的代码");
+            })
+                
+
+            // jquery执行ajax
+            /* $.ajax({
+                url: usrl,
+                method: "get",
+                success: function(resp){  }
+            }) */
+
+            // 箭头函数 (参数列表) => {函数体}
+            /* axios.get(url).then((userId,sex) => {
+                if(userId === 1001){
+                    return "lisi";
+                }
+            })  
+            function getName(userId){
+                if(userId == 10001){
+                    return "lisi";
+                }
+            } */
+        }
+
+        /* get 请求有两个参数，在url后面传递的 ?参数名=值 */
+        function get2(){
+            let url = "http://localhost:9000/api/user/get?id=2000&name=周同学";
+            axios.get(url).then((resp) => {
+                console.log("get2()传递参数成功，接收数据:" + resp.data.sex);
+            })
+        }
+
+        function get3(){
+            /* let url = "http://localhost:9000/api/user/get";
+            axios.get(url, {
+                params: {
+                    id:30005,
+                    name: "zhang同学"
+                }
+            }).then((resp) => {
+                console.log("服务器返回结果" + resp);
+            }).catch((err) => {
+                
+            }); */
+            
+            let data = {
+                id: 100,
+                name: "lisi"
+            }
+            let url = "http://localhost:9000/api/user/get";
+            axios.get(url, {
+                params: data
+            }).then((resp) => {
+                console.log("服务器返回结果" + resp);
+            }).catch((err) => {
+                
+            });
+        }
+
+        // post请求，传递参数格式  参数名=值&参数名=值
+        function post1(){
+            let url = "http://localhost:9000/api/user/add";
+            // post("请求url地址","参数名=值&参数名=值")
+            axios.post(url, "id=2345&name=zhangsan").then(resp => {
+                console.log("post请求处理成功" + resp);
+            })
+        }
+
+        // 发起请求，传递的对象数据，然后axios会把对象自动转为json格式数据
+        function post2(){
+            let url = "http://localhost:9000/api/user/json";
+            let data = {
+                id: 1001,
+                name: "张向",
+                sex: "女",
+                age: 20
+            }
+            axios.post(url, data).then(response => {
+                console.log("应答结果：" + resp);
+            })
+        }
+
+        // 发起请求，传递的对象数据，然后axios会把对象自动转为json格式数据
+        function post3(){
+            let url = "http://localhost:9000/api/user/json";
+            let param = {
+                id: 1001,
+                name: "张向",
+                sex: "女",
+                age: 22
+            }
+            axios({
+                url: url,
+                method: "post",
+                data: param
+            }).then((resp) => {
+               console.log("=========请求处理成功，接收数据" + resp); 
+               //console.log(resp);
+               console.log("姓名" + resp.data.name+","+resp.status+","+resp.statusText);
+            })
+        }
+        
+
+        // 请求拦截器
+        axios.interceptors.request.use(function(config) {
+            console.log("请求拦截器");
+            console.log("url="+config.url);
+            console.log("method="+config.method);
+
+            config.url = config.url + "?token=xxx";
+            // 返回请求配置对象
+            return config;
+        }, function(error){
+            console.log(error);
+        })
+
+        // 应答拦截器
+        axios.interceptors.response.use(function(response){
+            console.log("应答拦截器，接收服务器返回的数据结构");
+            console.log(response);
+            response.data.sex = "女子";
+            return response;
+        },function(error){
+            console.log(error);
+            return Promise.reject(response);
+        })
+
+
+    </script>
+
+</body>
+</html>
